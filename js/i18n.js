@@ -6,7 +6,7 @@
 
 const I18N = {
   en: {
-    "site.name": "UniCompare",
+    "site.name": "UniVerse",
     "site.tagline": "QC × ON",
     "nav.search": "Search",
     "nav.about": "About",
