@@ -56,22 +56,6 @@ All numbers in `js/data.js` are **placeholders**. Real figures:
   (enrolment, graduation, Relance surveys) + each university's site for
   R-score (CRC) cutoffs
 
-## Deploy it free (pick one)
-
-**GitHub Pages**
-1. Create a GitHub repository and push these files
-2. Settings → Pages → Source: `main` branch
-3. Your site is live at `https://<username>.github.io/<repo>`
-
-**Netlify (easiest)**
-1. Go to app.netlify.com/drop
-2. Drag the whole `uni-compare` folder onto the page
-3. Done — you get a live URL immediately
-
-**Cloudflare Pages** — connect the Git repo, build command: none,
-output directory: `/`.
-
-## Extending it
 
 Ideas that fit the existing structure without new infrastructure:
 - Comments from current students → add a `comments` array per school
