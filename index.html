@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UniCompare — Quebec & Ontario universities, built for CEGEP students</title>
+  <meta name="description" content="Compare Quebec and Ontario universities by program, R-score, budget, language and distance. Built for CEGEP students." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231e3fa8'/><text x='16' y='22' font-family='Helvetica' font-weight='bold' font-size='16' fill='white' text-anchor='middle'>U</text></svg>" />
+
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@700,500&f[]=satoshi@400,500,700&display=swap" rel="stylesheet" />
+  <link href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="index.html">
+        <span data-i18n="site.name">UniCompare</span>
+        <small data-i18n="site.tagline">QC × ON</small>
+      </a>
+      <nav class="nav" aria-label="Main">
+        <a class="nav-link" href="#search" data-i18n="nav.search">Search</a>
+        <button class="lang-btn" id="lang-toggle" data-i18n-label="lang.toggle" aria-label="Switch to French">FR</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1 data-i18n="hero.title">Compare Quebec and Ontario universities.</h1>
+      <p data-i18n="hero.sub">Built for CEGEP students. Filter by program, R-score, budget and distance — then compare schools side by side.</p>
+    </section>
+
+    <!-- ============ SEARCH PANEL ============ -->
+    <section id="search" aria-label="Search filters">
+      <form class="search-panel" id="search-form">
+        <div class="field">
+          <label for="f-program" data-i18n="search.program">Program of interest</label>
+          <select id="f-program">
+            <option value="" data-i18n="search.program.any">Any program</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-rscore" data-i18n="search.rscore">Your R-score (CRC)</label>
+          <input id="f-rscore" type="number" min="20" max="40" step="0.5" inputmode="decimal"
+                 placeholder="e.g. 30" data-i18n-placeholder="search.rscore.hint" />
+        </div>
+        <div class="field">
+          <label for="f-grade" data-i18n="search.grade">Your grade average (%)</label>
+          <input id="f-grade" type="number" min="60" max="100" step="0.5" inputmode="decimal"
+                 placeholder="e.g. 88" data-i18n-placeholder="search.grade.hint" />
+        </div>
+        <div class="field">
+          <label for="f-province" data-i18n="search.province">Province</label>
+          <select id="f-province">
+            <option value="" data-i18n="search.province.any">Quebec + Ontario</option>
+            <option value="QC">Québec</option>
+            <option value="ON">Ontario</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-language" data-i18n="search.language">Language of instruction</label>
+          <select id="f-language">
+            <option value="" data-i18n="search.language.any">Any language</option>
+            <option value="en" data-i18n="search.language.en">English</option>
+            <option value="fr" data-i18n="search.language.fr">French</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-radius" data-i18n="search.radius">Distance from Montréal</label>
+          <select id="f-radius">
+            <option value="" data-i18n="search.radius.any">Anywhere</option>
+            <option value="150" data-i18n="search.radius.150">Within 150 km</option>
+            <option value="300" data-i18n="search.radius.300">Within 300 km</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-residency" data-i18n="search.residency">You are a…</label>
+          <select id="f-residency">
+            <option value="qc" data-i18n="search.residency.qc">Quebec resident</option>
+            <option value="other" data-i18n="search.residency.other">Canadian (out of province)</option>
+            <option value="intl" data-i18n="search.residency.intl">International student</option>
+          </select>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============ RESULTS ============ -->
+    <section aria-label="Results">
+      <div class="results-head">
+        <span class="results-count" id="results-count"></span>
+        <button class="reset-btn" id="reset-btn" data-i18n="search.reset">Reset filters</button>
+      </div>
+      <div class="results-grid" id="results-grid"></div>
+      <div class="empty-state" id="empty-state" hidden></div>
+    </section>
+
+    <!-- ============ MAP ============ -->
+    <section class="map-section" aria-label="Map">
+      <h2 class="section-title" data-i18n="map.title">Map view</h2>
+      <p class="section-sub" data-i18n="map.hint">Click a pin to open the school page.</p>
+      <div id="map" role="application"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p data-i18n="footer.disclaimer">Sample data for demonstration — verify all figures with official sources before applying.</p>
+      <p>
+        <span data-i18n="footer.sources">Data sources:</span>
+        <a href="https://www.ouinfo.ca" rel="noopener">OUInfo</a> ·
+        <a href="https://cudo.ouac.on.ca" rel="noopener">CUDO</a> ·
+        <a href="https://www.quebec.ca/education/indicateurs-statistiques/enseignement-superieur" rel="noopener">MES Québec</a>
+      </p>
+      <p data-i18n="footer.about">This starter is fully static: add universities in js/data.js and host it free on GitHub Pages or Netlify.</p>
+    </div>
+  </footer>
+
+  <!-- ============ COMPARE BAR + MODAL ============ -->
+  <div class="compare-bar" id="compare-bar" role="status">
+    <span class="bar-label" id="compare-count"></span>
+    <button class="primary" id="compare-open"></button>
+    <button class="ghost" id="compare-clear" data-i18n="compare.clear">Clear</button>
+  </div>
+
+  <div class="modal-overlay" id="compare-modal" role="dialog" aria-modal="true" aria-labelledby="compare-title">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 id="compare-title" data-i18n="compare.title">Side-by-side comparison</h2>
+        <button class="modal-close" id="compare-close" data-i18n="compare.close">Close</button>
+      </div>
+      <div class="compare-table" id="compare-table"></div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
